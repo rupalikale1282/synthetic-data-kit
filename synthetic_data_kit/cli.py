@@ -109,12 +109,20 @@ def system_check(
                 # Check API access
                 try:
                     client = OpenAI(**client_kwargs)
-                    # Try a simple models list request to check connectivity
-                    models = client.models.list()
+                    # Try a simple models request to check connectivity
+                    messages = [
+                        {"role": "user", "content": "Hello"}
+                    ]
+                    response = client.chat.completions.create(
+                        model=model,
+                        messages=messages, 
+                        temperature=0.1
+                    )
                     console.print(f" API endpoint access confirmed", style="green")
                     if api_base:
                         console.print(f"Using custom API base: {api_base}", style="green")
                     console.print(f"Default model: {model}", style="green")
+                    console.print(f"Response from model: {response.choices[0].message.content}", style="green")
                     return 0
                 except Exception as e:
                     console.print(f"L Error connecting to API endpoint: {str(e)}", style="red")
