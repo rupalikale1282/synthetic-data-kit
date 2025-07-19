@@ -1,7 +1,7 @@
 import os
 import shutil
 import requests
-import lancedb as lance
+import lance
 from synthetic_data_kit.cli import app
 from typer.testing import CliRunner
 
@@ -42,9 +42,8 @@ def main():
     assert os.path.exists(output_lance_path)
 
     # Check the contents of the Lance dataset
-    db = lance.connect(OUTPUT_DIR)
-    table = db.open_table("sample_multimodal")
-    print(f"Number of rows: {len(table)}")
+    table = lance.dataset(f"{OUTPUT_DIR}/sample_multimodal.lance")
+    print(f"Number of rows: {table.count_rows()}")
     assert len(table) > 0
 
     # Verify schema and data
@@ -53,7 +52,7 @@ def main():
     assert "text" in schema.names
     assert "image" in schema.names
 
-    df = table.to_arrow().to_pandas()
+    df = table.to_table().to_pandas()
     text_column = df["text"]
     image_column = df["image"]
 
@@ -69,12 +68,12 @@ def main():
         "--output-dir",
         OUTPUT_DIR,
         "--type",
-        "qa",
+        "multimodal-qa",
     ])
 
     # Verify the output
     print(result.stdout)
-    output_json_path = os.path.join(OUTPUT_DIR, "sample_multimodal_qa_pairs.json")
+    output_json_path = os.path.join(OUTPUT_DIR, "multimodal_qa_pairs.json")
     assert os.path.exists(output_json_path)
     print("QA pair generation successful!")
 

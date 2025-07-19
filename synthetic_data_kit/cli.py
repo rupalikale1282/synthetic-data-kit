@@ -269,7 +269,7 @@ def ingest(
 def create(
     input: str = typer.Argument(..., help="File or directory to process"),
     content_type: str = typer.Option(
-        "qa", "--type", help="Type of content to generate [qa|summary|cot|cot-enhance]"
+        "qa", "--type", help="Type of content to generate [qa|summary|cot|cot-enhance|multimodal-qa]"
     ),
     output_dir: Optional[Path] = typer.Option(
         None, "--output-dir", "-o", help="Where to save the output"
@@ -307,6 +307,7 @@ def create(
     - qa: Generate question-answer pairs from .txt files (use --num-pairs to specify how many)
     - summary: Generate summaries from .txt files
     - cot: Generate Chain of Thought reasoning examples from .txt files (use --num-pairs to specify how many)
+    - multimodal-qa: Generate question-answer pairs from .lance files (use --num-pairs to specify how many)
     - cot-enhance: Enhance existing conversations with Chain of Thought reasoning from .json files
       (use --num-pairs to limit the number of conversations to enhance, default is to enhance all)
       (for cot-enhance, the input must be a JSON file with either:
