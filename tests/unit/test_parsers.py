@@ -125,15 +125,15 @@ def test_pdf_parser():
         mock_extract.assert_called_once_with(file_path)
 
         # Check that content matches our mock return value
-        assert content == "This is sample PDF content for testing."
+        assert content == [{"text": "This is sample PDF content for testing."}]
 
         # Test saving content
         with tempfile.TemporaryDirectory() as temp_dir:
             output_path = os.path.join(temp_dir, "output.txt")
-            parser.save(content, output_path)
+            parser.save(content[0]["text"], output_path)
 
             # Check that the file was saved correctly
             with open(output_path) as f:
                 saved_content = f.read()
 
-            assert saved_content == content
+            assert saved_content == "This is sample PDF content for testing."

@@ -168,8 +168,8 @@ def test_process_document(patch_config):
     generator = QAGenerator(client=mock_client)
 
     # Process document
-    result = generator.process_document(
-        document_text="This is a document to process.", num_pairs=2, verbose=False
+    result = generator.process_documents(
+        documents=[{"text": "This is a document to process."}], num_pairs=2, verbose=False
     )
 
     # Check that the result contains summary and QA pairs
