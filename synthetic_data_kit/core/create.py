@@ -11,6 +11,7 @@ from typing import Optional, Dict, Any
 
 from synthetic_data_kit.models.llm_client import LLMClient
 from synthetic_data_kit.generators.qa_generator import QAGenerator
+from synthetic_data_kit.generators.vqa_generator import VQAGenerator
 from synthetic_data_kit.generators.multimodal_qa_generator import MultimodalQAGenerator
 
 from synthetic_data_kit.utils.config import get_generation_config
@@ -115,6 +116,16 @@ def process_file(
     
     elif content_type == "multimodal-qa":
         generator = MultimodalQAGenerator(client, config_path)
+        output_path = generator.process_dataset(
+            documents=documents,
+            output_dir=output_dir,
+            num_examples=num_pairs,
+            verbose=verbose
+        )
+        return output_path
+
+    elif content_type == "vqa":
+        generator = VQAGenerator(client, config_path)
         output_path = generator.process_dataset(
             documents=documents,
             output_dir=output_dir,
