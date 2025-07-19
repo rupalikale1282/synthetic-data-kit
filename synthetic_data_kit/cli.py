@@ -169,6 +169,9 @@ def ingest(
     preview: bool = typer.Option(
         False, "--preview", help="Preview files to be processed without actually processing them"
     ),
+    multimodal: bool = typer.Option(
+        False, "--multimodal", help="Enable multimodal parsing for supported file types"
+    ),
 ):
     """
     Parse documents (PDF, HTML, YouTube, DOCX, PPT, TXT) into clean text.
@@ -247,7 +250,13 @@ def ingest(
                 console.print("Preview mode is only available for directories. Processing single file...", style="yellow")
             
             with console.status(f"Processing {input}..."):
-                output_path = process_file(input, output_dir, name, ctx.config)
+                output_path = process_file(
+                    input,
+                    output_dir=output_dir,
+                    output_name=name,
+                    config=ctx.config,
+                    multimodal=multimodal,
+                )
             console.print(f"✅ Text successfully extracted to [bold]{output_path}[/bold]", style="green")
             return 0
             
@@ -345,7 +354,7 @@ def create(
     
     try:
         # Check if input is a directory
-        if is_directory(input):
+        if is_directory(input) and not input.endswith(".lance"):
             # Preview mode - show files without processing
             if preview:
                 # For cot-enhance, look for .json files, otherwise .txt files
