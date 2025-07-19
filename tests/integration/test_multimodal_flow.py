@@ -70,30 +70,30 @@ def test_multimodal_flow(patch_config, test_env, file_type, create_dummy_file):
             assert os.path.exists(lance_path)
             assert lance_path.endswith(".lance")
 
-            # Mock LLMClient and VQAGenerator for the create step
+            # Mock LLMClient and MultimodalQAGenerator for the create step
             with patch("synthetic_data_kit.core.create.LLMClient") as mock_llm_client_class, \
-                 patch("synthetic_data_kit.core.create.VQAGenerator") as mock_vqa_gen_class:
+                 patch("synthetic_data_kit.core.create.MultimodalQAGenerator") as mock_mm_gen_class:
                 mock_llm_client = MagicMock()
                 mock_llm_client_class.return_value = mock_llm_client
 
                 mock_generator = MagicMock()
-                output_path = os.path.join(create_output_dir, "data.parquet")
+                output_path = os.path.join(create_output_dir, "data.json")
                 mock_generator.process_dataset.return_value = output_path
-                mock_vqa_gen_class.return_value = mock_generator
+                mock_mm_gen_class.return_value = mock_generator
 
-                # Create a dummy parquet file to be returned by the mock
+                # Create a dummy json file to be returned by the mock
                 os.makedirs(create_output_dir, exist_ok=True)
                 with open(output_path, "w") as f:
                     f.write("dummy content")
 
-                # Create VQA pairs from the Lance dataset
-                parquet_path = create.process_file(
+                # Create multimodal-qa pairs from the Lance dataset
+                json_path = create.process_file(
                     lance_path,
                     output_dir=create_output_dir,
-                    content_type="vqa"
+                    content_type="multimodal-qa"
                 )
-                assert os.path.exists(parquet_path)
-                assert parquet_path.endswith(".parquet")
+                assert os.path.exists(json_path)
+                assert json_path.endswith(".json")
 
                 mock_generator.process_dataset.assert_called_once()
 
