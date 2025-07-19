@@ -90,6 +90,8 @@ jobs:
         PROJECT_TEST_ENV: "1"
         API_ENDPOINT_KEY: "mock-api-key-for-testing"
       run: |
+        synthetic_data_kit system-check
+        synthetic_data_kit --help        
         pytest --cov=synthetic_data_kit --cov-report=xml --cov-report=term tests/
 
     - name: Upload coverage to Codecov
