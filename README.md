@@ -268,8 +268,8 @@ synthetic-data-kit ingest docs/report.pdf --multimodal
 # This will create a Lance dataset at data/parsed/report.lance
 # with 'text' and 'image' columns.
 
-# Generate VQA pairs from the ingested data
-synthetic-data-kit create data/parsed/report.lance --type vqa
+# Generate multimodal-qa pairs from the ingested data
+synthetic-data-kit create data/parsed/report.lance --type multimodal-qa
 ```
 
 ### Processing Multiple Files
