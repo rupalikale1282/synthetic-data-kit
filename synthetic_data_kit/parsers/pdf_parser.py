@@ -7,14 +7,14 @@
 import os
 import tempfile
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, List
 from urllib.parse import urlparse
 
 
 class PDFParser:
     """Parser for PDF documents"""
 
-    def parse(self, file_path: str) -> list[dict[str, any]]:
+    def parse(self, file_path: str) -> List[Dict[str, Any]]:
         """Parse a PDF file into plain text
 
         Args:
