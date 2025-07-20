@@ -120,7 +120,8 @@ def process_file(
             documents=documents,
             output_dir=output_dir,
             num_examples=num_pairs,
-            verbose=verbose
+            verbose=verbose,
+            base_name=base_name,
         )
         return output_path
 

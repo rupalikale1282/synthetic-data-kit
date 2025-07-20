@@ -81,10 +81,10 @@ class MultimodalQAGenerator:
                 break
         return all_qa_pairs[:num_pairs]
 
-    def process_dataset(self, documents, output_dir: str, num_examples=None, verbose=False) -> str:
+    def process_dataset(self, documents, output_dir: str, num_examples=None, verbose=False, base_name: str = "multimodal_qa_pairs") -> str:
         # documents: list of dicts with 'text' and 'image'
         qa_pairs = self.generate_qa_pairs(documents, num_examples or 25, verbose=verbose)
-        output_path = os.path.join(output_dir, "multimodal_qa_pairs.json")
+        output_path = os.path.join(output_dir, f"{base_name}.json")
         with open(output_path, "w", encoding="utf-8") as f:
             import json
             json.dump({"qa_pairs": qa_pairs}, f, indent=2)
