@@ -25,6 +25,8 @@ dependencies = [
     "flask-wtf>=1.0.0",
     "bootstrap-flask>=2.2.0",
     "beautifulsoup4>=4.12.0",
+    "pylance",
+    "PyMuPDF"
 ]
 
 # These fields appear in pip show
@@ -109,6 +111,7 @@ dev = [
     "mypy>=1.0.0",
     "pre-commit>=3.0.0",
     "beautifulsoup4>=4.12.0",
+    "PyMuPDF"
 ]
 
 [tool.mypy]

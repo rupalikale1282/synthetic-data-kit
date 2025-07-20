@@ -36,9 +36,9 @@ def test_single_file_ingest_still_works(patch_config):
             
             # Should call process_file once
             mock_process.assert_called_once()
-            call_args = mock_process.call_args[0]
-            assert call_args[0] == input_file  # input file path
-            assert str(call_args[1]) == output_dir  # output directory (Path object converted to string)
+            call_args, call_kwargs = mock_process.call_args
+            assert call_args[0] == input_file
+            assert str(call_kwargs['output_dir']) == output_dir
             
     finally:
         os.unlink(input_file)
@@ -191,8 +191,8 @@ def test_single_file_with_name_option():
             
             # Should call process_file with custom name
             mock_process.assert_called_once()
-            call_args = mock_process.call_args[0]
-            assert call_args[2] == custom_name  # name parameter
+            call_args, call_kwargs = mock_process.call_args
+            assert call_kwargs['output_name'] == custom_name
             
     finally:
         os.unlink(input_file)

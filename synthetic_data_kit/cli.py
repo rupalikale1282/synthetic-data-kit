@@ -177,6 +177,9 @@ def ingest(
     preview: bool = typer.Option(
         False, "--preview", help="Preview files to be processed without actually processing them"
     ),
+    multimodal: bool = typer.Option(
+        False, "--multimodal", help="Enable multimodal parsing for supported file types"
+    ),
 ):
     """
     Parse documents (PDF, HTML, YouTube, DOCX, PPT, TXT) into clean text.
@@ -239,7 +242,8 @@ def ingest(
                 directory=input,
                 output_dir=output_dir,
                 config=ctx.config,
-                verbose=verbose
+                verbose=verbose,
+                multimodal=multimodal,
             )
             
             # Return appropriate exit code
@@ -255,7 +259,13 @@ def ingest(
                 console.print("Preview mode is only available for directories. Processing single file...", style="yellow")
             
             with console.status(f"Processing {input}..."):
-                output_path = process_file(input, output_dir, name, ctx.config)
+                output_path = process_file(
+                    input,
+                    output_dir=output_dir,
+                    output_name=name,
+                    config=ctx.config,
+                    multimodal=multimodal,
+                )
             console.print(f"✅ Text successfully extracted to [bold]{output_path}[/bold]", style="green")
             return 0
             
@@ -268,7 +278,7 @@ def ingest(
 def create(
     input: str = typer.Argument(..., help="File or directory to process"),
     content_type: str = typer.Option(
-        "qa", "--type", help="Type of content to generate [qa|summary|cot|cot-enhance]"
+        "qa", "--type", help="Type of content to generate [qa|summary|cot|cot-enhance|multimodal-qa]"
     ),
     output_dir: Optional[Path] = typer.Option(
         None, "--output-dir", "-o", help="Where to save the output"
@@ -306,6 +316,7 @@ def create(
     - qa: Generate question-answer pairs from .txt files (use --num-pairs to specify how many)
     - summary: Generate summaries from .txt files
     - cot: Generate Chain of Thought reasoning examples from .txt files (use --num-pairs to specify how many)
+    - multimodal-qa: Generate question-answer pairs from .lance files (use --num-pairs to specify how many)
     - cot-enhance: Enhance existing conversations with Chain of Thought reasoning from .json files
       (use --num-pairs to limit the number of conversations to enhance, default is to enhance all)
       (for cot-enhance, the input must be a JSON file with either:
@@ -353,7 +364,7 @@ def create(
     
     try:
         # Check if input is a directory
-        if is_directory(input):
+        if is_directory(input) and not input.endswith(".lance"):
             # Preview mode - show files without processing
             if preview:
                 # For cot-enhance, look for .json files, otherwise .txt files

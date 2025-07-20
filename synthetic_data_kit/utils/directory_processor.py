@@ -15,7 +15,7 @@ console = Console()
 
 # Supported file extensions for each command
 INGEST_EXTENSIONS = ['.pdf', '.html', '.htm', '.docx', '.pptx', '.txt']
-CREATE_EXTENSIONS = ['.txt']
+CREATE_EXTENSIONS = ['.txt', '.lance']
 CURATE_EXTENSIONS = ['.json']
 SAVE_AS_EXTENSIONS = ['.json']
 
@@ -51,7 +51,9 @@ def get_supported_files(directory: str, extensions: List[str]) -> List[str]:
                 file_ext = os.path.splitext(filename)[1].lower()
                 if file_ext in extensions:
                     supported_files.append(file_path)
-    
+            elif os.path.isdir(file_path) and file_path.endswith(".lance"):
+                supported_files.append(file_path)
+
     except PermissionError:
         raise PermissionError(f"Permission denied accessing directory: {directory}")
     
@@ -61,7 +63,8 @@ def process_directory_ingest(
     directory: str,
     output_dir: Optional[str] = None,
     config: Optional[Dict[str, Any]] = None,
-    verbose: bool = False
+    verbose: bool = False,
+    multimodal: bool = False,
 ) -> Dict[str, Any]:
     """Process all supported files in directory for ingestion
     
@@ -119,7 +122,7 @@ def process_directory_ingest(
             
             try:
                 # Process individual file
-                output_path = process_file(file_path, output_dir, None, config)
+                output_path = process_file(file_path, output_dir, None, config, multimodal=multimodal)
                 
                 # Record success
                 results["successful"] += 1
@@ -243,8 +246,10 @@ def process_directory_create(
     # For cot-enhance, we process .json files instead
     if content_type == "cot-enhance":
         extensions = ['.json']
+    elif content_type == "multimodal-qa":
+        extensions = ['.lance']
     else:
-        extensions = CREATE_EXTENSIONS  # ['.txt']
+        extensions = ['.txt']
     
     # Get all supported files
     supported_files = get_supported_files(directory, extensions)
@@ -253,6 +258,8 @@ def process_directory_create(
         console.print(f"No supported files found in {directory}", style="yellow")
         if content_type == "cot-enhance":
             console.print(f"For cot-enhance: looking for .json files", style="yellow")
+        elif content_type == "multimodal-qa":
+            console.print(f"For multimodal-qa: looking for .lance files", style="yellow")
         else:
             console.print(f"For {content_type}: looking for .txt files", style="yellow")
         return {
