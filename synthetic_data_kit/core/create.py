@@ -37,7 +37,7 @@ def process_file(
     provider: Optional[str] = None,
     chunk_size: Optional[int] = None,
     chunk_overlap: Optional[int] = None,
-    rolling_summary: bool = False,
+    rolling_summary: Optional[bool] = False,
 ) -> str:
     """Process a file to generate content
     

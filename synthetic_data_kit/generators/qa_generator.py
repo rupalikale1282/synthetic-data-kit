@@ -33,7 +33,7 @@ class QAGenerator:
     
     def generate_summary(self, 
                          document_text: str, 
-                         rolling_summary: bool) -> str:
+                         rolling_summary: Optional[bool] = False) -> str:
         """Generate a summary of the document"""
         verbose = os.environ.get('SDK_VERBOSE', 'false').lower() == 'true'
         if verbose:
@@ -322,7 +322,7 @@ class QAGenerator:
                         documents: List[Dict[str, Any]],
                         num_pairs: int = 25,
                         verbose: bool = False,
-                        rolling_summary: bool = False) -> Dict[str, Any]:
+                        rolling_summary: Optional[bool] = False) -> Dict[str, Any]:
         """Process a list of documents to generate QA pairs without rating"""
         # Set the verbose environment variable
         if verbose:
