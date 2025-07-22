@@ -39,16 +39,17 @@ class QAGenerator:
         if verbose:
             print("Generating document summary...")
         
-        # Get summary prompt from config
+        # Get summary prompt and params from config
         prompt = get_prompt(self.config, "summary")
         max_context_length = self.generation_config.get("max_context_length", 8000)
+        summary_overlap = self.generation_config.get("summary_overlap", 0)
 
         if rolling_summary:
             summary_per_chunk = []
             #split text into long chunks for summarization
             chunks = split_into_chunks(document_text,
                                        chunk_size=max_context_length,
-                                       overlap=0)
+                                       overlap=summary_overlap)
 
             for chunk in chunks:
                 messages = [

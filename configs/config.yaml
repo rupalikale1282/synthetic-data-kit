@@ -52,7 +52,8 @@ generation:
   num_cot_enhance_examples: null  # Maximum number of conversations to enhance (null = enhance all)
   batch_size: 32     # Number of requests to batch together (for create)
   max_context_length: 8000       # Context Length of the MODEL. Useful while Generating Summary
-
+  summary_overlap: 0       # Overlap between chunks to maintain context. Useful while Generating Summary
+  
 # Content curation parameters
 curate:
   threshold: 7.0     # Default quality threshold (1-10)
