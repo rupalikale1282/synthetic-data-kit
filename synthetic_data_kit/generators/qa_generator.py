@@ -31,24 +31,51 @@ class QAGenerator:
         self.generation_config = get_generation_config(self.config)
         self.curate_config = get_curate_config(self.config)
     
-    def generate_summary(self, document_text: str) -> str:
+    def generate_summary(self, 
+                         document_text: str, 
+                         rolling_summary: Optional[bool] = False) -> str:
         """Generate a summary of the document"""
         verbose = os.environ.get('SDK_VERBOSE', 'false').lower() == 'true'
         if verbose:
             print("Generating document summary...")
         
-        # Get summary prompt from config
+        # Get summary prompt and params from config
         prompt = get_prompt(self.config, "summary")
         max_context_length = self.generation_config.get("max_context_length", 8000)
-        messages = [
-            {"role": "system", "content": prompt},
-            {"role": "user", "content": document_text[0:max_context_length]}
-        ]
-        
-        summary = self.client.chat_completion(
-            messages, 
-            temperature=0.1  # Use lower temperature for summaries
-        )
+        summary_overlap = self.generation_config.get("summary_overlap", 0)
+
+        if rolling_summary:
+            summary_per_chunk = []
+            #split text into long chunks for summarization
+            chunks = split_into_chunks(document_text,
+                                       chunk_size=max_context_length,
+                                       overlap=summary_overlap)
+
+            for chunk in chunks:
+                messages = [
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": chunk}
+                ]
+                new_summary = self.client.chat_completion(
+                    messages, 
+                    temperature=0.1  # Use lower temperature for summaries
+                )
+                summary_per_chunk.append(new_summary)
+
+            summary = " .".join(summary_per_chunk)
+            # Summarize again to reduce overall length and redundancy
+            summary = self.generate_summary(summary,
+                                            rolling_summary=False)
+        else:
+            messages = [
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": document_text[0:max_context_length]}
+            ]
+            
+            summary = self.client.chat_completion(
+                messages, 
+                temperature=0.1  # Use lower temperature for summaries
+            )
         
         if verbose:
             print(f"Summary generated ({len(summary)} chars)")
@@ -294,7 +321,8 @@ class QAGenerator:
     def process_documents(self,
                         documents: List[Dict[str, Any]],
                         num_pairs: int = 25,
-                        verbose: bool = False) -> Dict[str, Any]:
+                        verbose: bool = False,
+                        rolling_summary: Optional[bool] = False) -> Dict[str, Any]:
         """Process a list of documents to generate QA pairs without rating"""
         # Set the verbose environment variable
         if verbose:
@@ -306,7 +334,7 @@ class QAGenerator:
         full_text = " ".join([doc["text"] for doc in documents])
 
         # Generate summary
-        summary = self.generate_summary(full_text)
+        summary = self.generate_summary(full_text, rolling_summary=rolling_summary)
 
         # Generate QA pairs
         qa_pairs = self.generate_qa_pairs(full_text, summary, num_pairs=num_pairs)

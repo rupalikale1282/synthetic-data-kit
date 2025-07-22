@@ -37,6 +37,7 @@ def process_file(
     provider: Optional[str] = None,
     chunk_size: Optional[int] = None,
     chunk_overlap: Optional[int] = None,
+    rolling_summary: Optional[bool] = False,
 ) -> str:
     """Process a file to generate content
     
@@ -97,7 +98,8 @@ def process_file(
         result = generator.process_documents(
             documents,
             num_pairs=num_pairs,
-            verbose=verbose
+            verbose=verbose,
+            rolling_summary=rolling_summary
         )
         
         # Save output
