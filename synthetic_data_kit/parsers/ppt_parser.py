@@ -45,7 +45,8 @@ class PPTParser:
             
             all_text.append("\n".join(slide_text))
         
-        return "\n\n".join(all_text)
+        text = "\n\n".join(all_text)
+        return [{"text": text}]
     
     def save(self, content: str, output_path: str) -> None:
         """Save the extracted text to a file
