@@ -27,7 +27,7 @@ def test_txt_parser():
         content = parser.parse(file_path)
 
         # Check that content was extracted correctly
-        assert content == "This is sample text content for testing."
+        assert content == [{"text": "This is sample text content for testing."}]
 
         # Test saving content
         output_path = os.path.join(tempfile.gettempdir(), "output.txt")
