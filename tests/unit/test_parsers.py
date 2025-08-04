@@ -29,15 +29,18 @@ def test_txt_parser():
         # Check that content was extracted correctly
         assert content == [{"text": "This is sample text content for testing."}]
 
+        # Convert content to str
+        text_content = "\n".join([item["text"] for item in content])
+
         # Test saving content
         output_path = os.path.join(tempfile.gettempdir(), "output.txt")
-        parser.save(content, output_path)
+        parser.save(text_content, output_path)
 
         # Check that the file was saved correctly
         with open(output_path) as f:
             saved_content = f.read()
 
-        assert saved_content == content
+        assert saved_content == text_content
     finally:
         # Clean up
         if os.path.exists(file_path):
