@@ -59,9 +59,9 @@ class TestDOCXParser:
         # Test parsing
         parser = DOCXParser()
         result = parser.parse("/fake/path.docx")
-
+        
         expected = "First paragraph\n\nSecond paragraph\n\nCell 1\n\nCell 2"
-        assert result == expected
+        assert result == [{"text": expected}]
         # Verify docx import was called (first argument of any call should be 'docx')
         import_calls = [call[0][0] for call in mock_import.call_args_list if call[0]]
         assert "docx" in import_calls
@@ -145,7 +145,7 @@ class TestPPTParser:
             "Slide 2 content",
         ]
         expected = "\n\n".join(["\n".join(expected_lines[:4]), "\n".join(expected_lines[5:])])
-        assert result == expected
+        assert result == [{"text": expected}]
         # Verify pptx import was called
         import_calls = [call[0][0] for call in mock_import.call_args_list if call[0]]
         assert "pptx" in import_calls

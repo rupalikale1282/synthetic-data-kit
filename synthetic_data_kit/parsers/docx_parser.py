@@ -35,7 +35,8 @@ class DOCXParser:
                 for cell in row.cells:
                     paragraphs.append(cell.text)
         
-        return "\n\n".join(p for p in paragraphs if p)
+        text= "\n\n".join(p for p in paragraphs if p)
+        return [{"text": text}]
     
     def save(self, content: str, output_path: str) -> None:
         """Save the extracted text to a file

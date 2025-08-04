@@ -20,7 +20,7 @@ class TXTParser:
             Text content
         """
         with open(file_path, 'r', encoding='utf-8') as f:
-            return f.read()
+            return [{"text": f.read()}]
     
     def save(self, content: str, output_path: str) -> None:
         """Save the text to a file
